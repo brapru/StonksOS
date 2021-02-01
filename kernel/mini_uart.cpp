@@ -2,7 +2,7 @@
 #include "peripherals/mini_uart.hpp"
 #include "peripherals/gpio.hpp"
 
-void uart_send ( char c )
+void uart_send(char c)
 {
 	while(1) {
 		if(get32(AUX_MU_LSR_REG)&0x20) 
@@ -11,7 +11,7 @@ void uart_send ( char c )
 	put32(AUX_MU_IO_REG,c);
 }
 
-char uart_recv ( void )
+char uart_recv(void)
 {
 	while(1) {
 		if(get32(AUX_MU_LSR_REG)&0x01) 
@@ -20,14 +20,14 @@ char uart_recv ( void )
 	return(get32(AUX_MU_IO_REG)&0xFF);
 }
 
-void uart_send_string(char* str)
+void uart_send_string(const char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
 		uart_send((char)str[i]);
 	}
 }
 
-void uart_init ( void )
+void uart_init(void)
 {
 	unsigned int selector;
 

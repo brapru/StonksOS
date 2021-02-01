@@ -11,6 +11,10 @@
 
 #ifndef __ASSEMBLER__
 
+namespace Kernel {
+
 void memzero(unsigned long src, unsigned long n);
+
+}
 
 #endif

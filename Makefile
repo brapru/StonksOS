@@ -1,19 +1,22 @@
 TARGET=stonksos-kernel8
-RASPI ?= 4
+RASPI=4
 
 SRCDIR=kernel
 BUILDDIR=build
-INCLUDEDIR=include
+INCLUDEDIRS=-Iinclude \
+	    -Iinclude/peripherals
 
 CTOOL=aarch64-linux-gnu
 CC=$(CTOOL)-gcc
-CXX=$(CTOOL)-cpp
+CXX=$(CTOOL)-g++
 LD=$(CTOOL)-ld
 OBJCOPY=$(CTOOL)-objcopy
 GDB=$(CTOOL)-gdb
 
-CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -I$(INCLUDEDIR) -mgeneral-regs-only
-CFLAGS += -DRASPI=$(RASPI)
+CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding $(INCLUDEDIRS) -mgeneral-regs-only
+CFLAGS += -DRPI_VERSION=$(RASPI)
+
+.PHONY: all clean
 
 all: $(BUILDDIR)/$(TARGET).img
 
@@ -21,23 +24,40 @@ CXXSOURCES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
 ASMSOURCES=$(notdir $(wildcard $(SRCDIR)/*.S))
 ASMSOURCES += $(notdir $(wildcard arch/aarch64/boot/*.S))
 
-OBJECTS = $(CXXSOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%_cpp.o)
-OBJECTS += $(ASMSOURCES:$(SRCDIR)/%.S=$(BUILDDIR)/%_s.o)
+OBJECTS = $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(CXXSOURCES))))
+OBJECTS += $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(ASMSOURCES))))
 
 DEP_FILES = $(OBJECTS:%o=%.d)
 -include $(DEP_FILES)
 
 $(BUILDDIR)/$(TARGET).img: $(SRCDIR)/linker.ld $(OBJECTS)
 	$(LD) -T $(SRCDIR)/linker.ld -o $(BUILDDIR)/$(TARGET).elf $(OBJECTS)
-	$(OBJCOPY) $(BUILDDIR)/$(TARGET).elf -O binary $(TARGET).img
+	$(OBJCOPY) $(BUILDDIR)/$(TARGET).elf -O binary $(BUILDDIR)/$(TARGET)-$(RASPI).img
 
-$(BUILDDIR)/%_cpp.o: $(SRCDIR)/%.cpp
-	mkdir -p $(@D)
-	$(CXX) $(CFLAGS) -MMD -c $< -o $@
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	mkdir -p build
+	$(CXX) $(CFLAGS) -c -MMD $< -o $@
 
-$(BUILDDIR)/%_s.o: $(SRCDIR)/%.S
-	mkdir -p $(@D)
-	$(CXX) -I$(INCLUDES) -MMD -c $< -o $@
+$(BUILDDIR)/%.o: $(SRCDIR)/%.S
+	mkdir -p build
+	$(CXX) $(INCLUDEDIRS) -MMD -c $< -o $@
+
+$(BUILDDIR)/%.o: arch/aarch64/boot/%.S
+	mkdir -p build
+	$(CXX) $(INCLUDEDIRS) -MMD -c $< -o $@
+
+rpi3:
+	$(MAKE) RASPI=3
+
+rpi4:
+	$(MAKE) RASPI=4
+
+qemu:
+	$(MAKE) RASPI=3
+	qemu-system-aarch64 -m 128 -M raspi3 \
+	-nographic -serial null -chardev stdio,id=tty0 \
+	-serial chardev:tty0 -monitor none \
+	-kernel ./build/stonksos-kernel8-3.img
 
 clean:
 	rm -rf $(BUILDDIR) *.img
