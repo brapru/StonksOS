@@ -27,9 +27,6 @@ ASMSOURCES += $(notdir $(wildcard arch/aarch64/boot/*.S))
 OBJECTS = $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(CXXSOURCES))))
 OBJECTS += $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(ASMSOURCES))))
 
-DEP_FILES = $(OBJECTS:%o=%.d)
--include $(DEP_FILES)
-
 $(BUILDDIR)/$(TARGET).img: $(SRCDIR)/linker.ld $(OBJECTS)
 	$(LD) -T $(SRCDIR)/linker.ld -o $(BUILDDIR)/$(TARGET).elf $(OBJECTS)
 	$(OBJCOPY) $(BUILDDIR)/$(TARGET).elf -O binary $(BUILDDIR)/$(TARGET)-$(RASPI).img
