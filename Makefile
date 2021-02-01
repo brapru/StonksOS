@@ -1,40 +1,43 @@
-TARGET=stonksos-kernel8.img
+TARGET=stonksos-kernel8
 RASPI ?= 4
 
-SRCDIR=src
+SRCDIR=kernel
 BUILDDIR=build
-INCLUDEDIR=$(SRCDIR)/includes
+INCLUDEDIR=include
 
 CTOOL=aarch64-linux-gnu
 CC=$(CTOOL)-gcc
-CXX=$(CTOOL)-g++
+CXX=$(CTOOL)-cpp
 LD=$(CTOOL)-ld
+OBJCOPY=$(CTOOL)-objcopy
 GDB=$(CTOOL)-gdb
 
-CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only
+CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -I$(INCLUDEDIR) -mgeneral-regs-only
 CFLAGS += -DRASPI=$(RASPI)
-
-CSOURCES=$(notdir $(wildcard $(SRCDIR)/*.c))
-CXXSOURCES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
-ASMSOURCES=$(notdir $(wildcard $(SRCDIR)/*.S))
-
-OBJECTS = $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(CSOURCES))))
-OBJECTS = $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(CXXSOURCES))))
-OBJECTS = $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(basename $(ASMSOURCES))))
 
 all: $(BUILDDIR)/$(TARGET).img
 
-$(BUILDDIR)/%_c.o: $(SRCDIR)/%.c
-	mkdir -p $(BUILDDIR)
-	$(CC)-gcc $(CFLAGS) -MMD -c $< -o $@
+CXXSOURCES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
+ASMSOURCES=$(notdir $(wildcard $(SRCDIR)/*.S))
+ASMSOURCES += $(notdir $(wildcard arch/aarch64/boot/*.S))
 
-$(BUILDDIR)/%_c.o: $(SRCDIR)/%.S
-	mkdir -p $(BUILDDIR)
-	$(CC)-gcc $(CFLAGS) -MMD -c $< -o $@
+OBJECTS = $(CXXSOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%_cpp.o)
+OBJECTS += $(ASMSOURCES:$(SRCDIR)/%.S=$(BUILDDIR)/%_s.o)
 
-$(TARGET).img: $(SRCDIR)/linker.ld $(OBJS)
-	$(CC)-ld -T $(SRCDIR)/linker.ld -o $(BUILDDIR)/$(TARGET).elf $(OBJS)
-	$(CC)-objcopy $(BUILDDIR)/$(TARGET).elf -O binary $(TARGET).img
+DEP_FILES = $(OBJECTS:%o=%.d)
+-include $(DEP_FILES)
+
+$(BUILDDIR)/$(TARGET).img: $(SRCDIR)/linker.ld $(OBJECTS)
+	$(LD) -T $(SRCDIR)/linker.ld -o $(BUILDDIR)/$(TARGET).elf $(OBJECTS)
+	$(OBJCOPY) $(BUILDDIR)/$(TARGET).elf -O binary $(TARGET).img
+
+$(BUILDDIR)/%_cpp.o: $(SRCDIR)/%.cpp
+	mkdir -p $(@D)
+	$(CXX) $(CFLAGS) -MMD -c $< -o $@
+
+$(BUILDDIR)/%_s.o: $(SRCDIR)/%.S
+	mkdir -p $(@D)
+	$(CXX) -I$(INCLUDES) -MMD -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) *.img
+	rm -rf $(BUILDDIR) *.img
