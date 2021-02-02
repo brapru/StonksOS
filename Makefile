@@ -50,8 +50,9 @@ rpi4:
 	$(MAKE) RASPI=4
 
 qemu:
+	$(MAKE) clean
 	$(MAKE) RASPI=3
-	qemu-system-aarch64 -m 128 -M raspi3 \
+	qemu-system-aarch64 -M raspi3 \
 	-nographic -serial null -chardev stdio,id=tty0 \
 	-serial chardev:tty0 -monitor none \
 	-kernel ./build/stonksos-kernel8-3.img
