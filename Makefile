@@ -32,15 +32,15 @@ $(BUILDDIR)/$(TARGET).img: $(SRCDIR)/linker.ld $(OBJECTS)
 	$(OBJCOPY) $(BUILDDIR)/$(TARGET).elf -O binary $(BUILDDIR)/$(TARGET)-$(RASPI).img
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	mkdir -p build
+	@mkdir -p build
 	$(CXX) $(CFLAGS) -c -MMD $< -o $@
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.S
-	mkdir -p build
+	@mkdir -p build
 	$(CXX) $(INCLUDEDIRS) -MMD -c $< -o $@
 
 $(BUILDDIR)/%.o: arch/aarch64/boot/%.S
-	mkdir -p build
+	@mkdir -p build
 	$(CXX) $(INCLUDEDIRS) -MMD -c $< -o $@
 
 rpi3:
