@@ -5,7 +5,7 @@
 void uart_send(char c)
 {
 	while(1) {
-		if(get32(AUX_MU_LSR_REG)&0x20) 
+		if(kernel::get32(AUX_MU_LSR_REG)&0x20) 
 			break;
 	}
 	put32(AUX_MU_IO_REG,c);
@@ -14,10 +14,10 @@ void uart_send(char c)
 char uart_recv(void)
 {
 	while(1) {
-		if(get32(AUX_MU_LSR_REG)&0x01) 
+		if(kernel::get32(AUX_MU_LSR_REG)&0x01) 
 			break;
 	}
-	return(get32(AUX_MU_IO_REG)&0xFF);
+	return(kernel::get32(AUX_MU_IO_REG)&0xFF);
 }
 
 void uart_send_string(const char* str)
@@ -31,7 +31,7 @@ void uart_init(void)
 {
 	unsigned int selector;
 
-	selector = get32(GPFSEL1);
+	selector = kernel::get32(GPFSEL1);
 	selector &= ~(7<<12);                   // clean gpio14
 	selector |= 2<<12;                      // set alt5 for gpio14
 	selector &= ~(7<<15);                   // clean gpio15
@@ -39,9 +39,9 @@ void uart_init(void)
 	put32(GPFSEL1,selector);
 
 	put32(GPPUD,0);
-	delay(150);
+	kernel::delay(150);
 	put32(GPPUDCLK0,(1<<14)|(1<<15));
-	delay(150);
+	kernel::delay(150);
 	put32(GPPUDCLK0,0);
 
 	put32(AUX_ENABLES,1);                   //Enable mini uart (this also enables access to its registers)
