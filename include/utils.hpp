@@ -4,9 +4,9 @@ namespace kernel {
 
 inline void delay(unsigned long ticks){
 	asm volatile("delay:; "
-		     "subs %[ticks], %[ticks], #1;"
+		     "subs %0, %0, #1;"
 		     "bne delay"
-		     :[ticks] "=r" (ticks));
+		     : :"r" (ticks));
 }
 
 inline unsigned int get32(unsigned long address){
@@ -17,7 +17,8 @@ inline unsigned int get32(unsigned long address){
 	return retval;
 }
 
+inline void put32(unsigned long address, unsigned int value){
+	asm volatile("str w1, [x0]" : : "r" (address), "r" (value));
 }
 
-extern "C" void put32(unsigned long address, unsigned int value);
-
+}
