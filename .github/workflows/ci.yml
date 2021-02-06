@@ -27,8 +27,7 @@ jobs:
           make clean
           make RASPI=3
 
-      - name: Discord notification 
-        uses: sarisia/actions-status-discord@v1
+      - uses: sarisia/actions-status-discord@v1
         with:
           webhook: {{ secrets.DISCORD_WEBHOOK }}
           title: "StonksOS Update"
