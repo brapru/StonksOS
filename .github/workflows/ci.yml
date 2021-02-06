@@ -26,11 +26,11 @@ jobs:
         run: |
           make clean
           make RASPI=3
-      
-      - name: Discord notification
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@master
-        with:
-            args: 'New commit {{ EVENT_PAYLOAD.repository.full_name }}'
 
+      - name: Discord notification 
+        uses: sarisia/actions-status-discord@v1
+	with:
+	  webhook: {{ secrets.DISCORD_WEBHOOK }}
+	  title: "StonksOS Update"
+	  description: "StonksOS Continuous Integration"
+	  color: 0x0000ff
