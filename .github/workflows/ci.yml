@@ -1,0 +1,28 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: check out
+      - uses: actions/checkout@v2
+        
+      - name: install build dependencies
+        run: |
+          apt-get update
+          apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu build-essential -y
+  
+      - name: Build StonksOS (RaspberryPi 4)
+        working-directory: ${{ github.workspace }}
+        run: |
+          make clean
+          make
+          
+      - name: Build StonksOS (RaspberryPi 3)
+        working-directory: ${{ github.workspace }}
+        run: |
+          make clean
+          make RASPI=3
