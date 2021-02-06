@@ -26,3 +26,11 @@ jobs:
         run: |
           make clean
           make RASPI=3
+      
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+            args: '{{ github.actor  }} pushed a commit {{ EVENT_PAYLOAD.repository.full_name }}'
+
