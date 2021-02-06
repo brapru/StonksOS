@@ -12,8 +12,8 @@ jobs:
         
       - name: install build dependencies
         run: |
-          apt-get update
-          apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu build-essential -y
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu build-essential -y
   
       - name: Build StonksOS (RaspberryPi 4)
         working-directory: ${{ github.workspace }}
