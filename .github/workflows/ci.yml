@@ -30,6 +30,5 @@ jobs:
       - uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: "StonksOS Update"
+          title: "Commit to StonksOS"
           description: "StonksOS Continuous Integration"
-          color: 0x0000ff
