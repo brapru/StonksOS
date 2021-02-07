@@ -27,7 +27,9 @@ jobs:
           make clean
           make RASPI=3
 
-      - uses: sarisia/actions-status-discord@v1
+      - name: Notify discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: "Commit to StonksOS"
