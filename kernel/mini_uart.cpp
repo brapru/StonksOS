@@ -8,6 +8,9 @@ void uart_send(char c)
 		if(kernel::get32(AUX_MU_LSR_REG)&0x20) 
 			break;
 	}
+	if (c == '\n')
+		kernel::put32(AUX_MU_IO_REG, '\r');
+
 	kernel::put32(AUX_MU_IO_REG,c);
 }
 
@@ -17,7 +20,8 @@ char uart_recv(void)
 		if(kernel::get32(AUX_MU_LSR_REG)&0x01) 
 			break;
 	}
-	return(kernel::get32(AUX_MU_IO_REG)&0xFF);
+	char c = kernel::get32(AUX_MU_IO_REG)&0xFF;
+	return(c=='\r'?'\n':c);
 }
 
 void uart_send_string(const char* str)
@@ -25,6 +29,18 @@ void uart_send_string(const char* str)
 	for (int i = 0; str[i] != '\0'; i ++) {
 		uart_send((char)str[i]);
 	}
+}
+
+void uart_hex(unsigned int d) 
+{
+	unsigned int n;
+	int c;
+	for (c = 28; c >= 0; c -=4)
+	{
+		n = (d >> c)&0xf;
+		n += n > 9? 0x37: 0x30;
+		uart_send(n);
+	}	    
 }
 
 void uart_init(void)
