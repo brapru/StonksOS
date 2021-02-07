@@ -65,7 +65,14 @@ void uart_init(void)
 	kernel::put32(AUX_MU_IER_REG,0);                //Disable receive and transmit interrupts
 	kernel::put32(AUX_MU_LCR_REG,3);                //Enable 8 bit mode
 	kernel::put32(AUX_MU_MCR_REG,0);                //Set RTS line to be always high
+	
+#if RPI_VERSION == 3
 	kernel::put32(AUX_MU_BAUD_REG,270);             //Set baud rate to 115200
+#endif
+
+#if RPI_VERSION == 4
+	kernel::put32(AUX_MU_BAUD_REG,541);             //Set baud rate to 115200
+#endif
 
 	kernel::put32(AUX_MU_CNTL_REG,3);               //Finally, enable transmitter and receiver
 }
