@@ -1,8 +1,13 @@
+#include "mini_uart.hpp"
 #include "utils.hpp"
-#include "peripherals/mini_uart.hpp"
 #include "peripherals/gpio.hpp"
 
-void uart_send(char c)
+MiniUart::MiniUart()
+{
+	uart_init();
+}
+
+void MiniUart::uart_send(char c)
 {
 	while(1) {
 		if(kernel::get32(AUX_MU_LSR_REG)&0x20) 
@@ -14,7 +19,7 @@ void uart_send(char c)
 	kernel::put32(AUX_MU_IO_REG,c);
 }
 
-char uart_recv(void)
+char MiniUart::uart_recv(void)
 {
 	while(1) {
 		if(kernel::get32(AUX_MU_LSR_REG)&0x01) 
@@ -24,14 +29,14 @@ char uart_recv(void)
 	return(c=='\r'?'\n':c);
 }
 
-void uart_send_string(const char* str)
+void MiniUart::uart_send_string(const char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
 		uart_send((char)str[i]);
 	}
 }
 
-void uart_hex(unsigned int d) 
+void MiniUart::uart_hex(unsigned int d) 
 {
 	unsigned int n;
 	int c;
@@ -43,7 +48,7 @@ void uart_hex(unsigned int d)
 	}	    
 }
 
-void uart_init(void)
+void MiniUart::uart_init(void)
 {
 	unsigned int selector;
 

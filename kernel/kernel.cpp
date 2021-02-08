@@ -3,8 +3,9 @@
 
 /*  StonksOS kernel entry point */
 extern "C" [[noreturn]] void kernel_main(){
-	uart_init();
-	uart_send_string("\r\nWelcome to StonksOS.\r\n");
+	
+	MiniUart mu;
+	mu.uart_send_string("\r\nWelcome to StonksOS.\r\n");
 
 	mbox[0] = 8*4;			//length of message
 	mbox[1] = MBOX_REQUEST;		//this is a request message
@@ -20,17 +21,17 @@ extern "C" [[noreturn]] void kernel_main(){
 	//send message to GPU and receive answer
 	if (mbox_call(MBOX_CH_PROP)) 
 	{
-		uart_send_string("My serial number is: ");
-		uart_hex(mbox[6]);
-		uart_hex(mbox[5]);
-		uart_send('\n');
+		mu.uart_send_string("My serial number is: ");
+		mu.uart_hex(mbox[6]);
+		mu.uart_hex(mbox[5]);
+		mu.uart_send('\n');
 	}
 	else
 	{
-		uart_send_string("unable to query serial!\n");
+		mu.uart_send_string("unable to query serial!\n");
 	}
 
 	while(1){
-		uart_send(uart_recv());
+		mu.uart_send(mu.uart_recv());
 	}
 }
