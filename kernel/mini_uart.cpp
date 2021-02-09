@@ -1,6 +1,7 @@
 #include "mini_uart.hpp"
 #include "utils.hpp"
 #include "peripherals/gpio.hpp"
+#include "peripherals/aux.hpp"
 
 MiniUart::MiniUart()
 {
@@ -10,22 +11,22 @@ MiniUart::MiniUart()
 void MiniUart::uart_send(char c)
 {
 	while(1) {
-		if(kernel::get32(AUX_MU_LSR_REG)&0x20) 
+		if(REGS_AUX->mu_lsr & 0x20) 
 			break;
 	}
 	if (c == '\n')
-		kernel::put32(AUX_MU_IO_REG, '\r');
+		REGS_AUX->mu_io = '\r';
 
-	kernel::put32(AUX_MU_IO_REG,c);
+	REGS_AUX->mu_io = c;
 }
 
 char MiniUart::uart_recv(void)
 {
 	while(1) {
-		if(kernel::get32(AUX_MU_LSR_REG)&0x01) 
+		if(REGS_AUX->mu_lsr & 0x01) 
 			break;
 	}
-	char c = kernel::get32(AUX_MU_IO_REG)&0xFF;
+	char c = REGS_AUX->mu_io & 0xFF;
 	return(c=='\r'?'\n':c);
 }
 
@@ -65,19 +66,18 @@ void MiniUart::uart_init(void)
 	kernel::delay(150);
 	kernel::put32(GPPUDCLK0,0);
 
-	kernel::put32(AUX_ENABLES,1);                   //Enable mini uart (this also enables access to its registers)
-	kernel::put32(AUX_MU_CNTL_REG,0);               //Disable auto flow control and disable receiver and transmitter (for now)
-	kernel::put32(AUX_MU_IER_REG,0);                //Disable receive and transmit interrupts
-	kernel::put32(AUX_MU_LCR_REG,3);                //Enable 8 bit mode
-	kernel::put32(AUX_MU_MCR_REG,0);                //Set RTS line to be always high
-	
+	REGS_AUX->enables = 1;
+	REGS_AUX->mu_control = 0;
+        REGS_AUX->mu_ier = 0;
+	REGS_AUX->mu_lcr = 3;
+	REGS_AUX->mu_mcr = 0;
 #if RPI_VERSION == 3
-	kernel::put32(AUX_MU_BAUD_REG,270);             //Set baud rate to 115200
+	REGS_AUX->mu_baud_rate = 270;             //Set baud rate to 115200
 #endif
 
 #if RPI_VERSION == 4
-	kernel::put32(AUX_MU_BAUD_REG,541);             //Set baud rate to 115200
+	REGS_AUX->mu_baud_rate = 541;             //Set baud rate to 115200
 #endif
 
-	kernel::put32(AUX_MU_CNTL_REG,3);               //Finally, enable transmitter and receiver
+	REGS_AUX->mu_control = 3;               //Finally, enable transmitter and receiver
 }
