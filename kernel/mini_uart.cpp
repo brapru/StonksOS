@@ -11,22 +11,22 @@ MiniUart::MiniUart()
 void MiniUart::uart_send(char c)
 {
 	while(1) {
-		if(REGS_AUX->mu_lsr & 0x20) 
+		if(get_aux()->get_aux_regs_ptr()->mu_lsr & 0x20) 
 			break;
 	}
 	if (c == '\n')
-		REGS_AUX->mu_io = '\r';
+		get_aux()->get_aux_regs_ptr()->mu_io = '\r';
 
-	REGS_AUX->mu_io = c;
+	get_aux()->get_aux_regs_ptr()->mu_io = c;
 }
 
 char MiniUart::uart_recv(void)
 {
 	while(1) {
-		if(REGS_AUX->mu_lsr & 0x01) 
+		if(get_aux()->get_aux_regs_ptr()->mu_lsr & 0x01) 
 			break;
 	}
-	char c = REGS_AUX->mu_io & 0xFF;
+	char c = get_aux()->get_aux_regs_ptr()->mu_io & 0xFF;
 	return(c=='\r'?'\n':c);
 }
 
@@ -49,6 +49,11 @@ void MiniUart::uart_hex(unsigned int d)
 	}	    
 }
 
+Aux *MiniUart::get_aux(void)
+{
+	return &aux;
+}
+
 void MiniUart::uart_init(void)
 {
 	unsigned int selector;
@@ -66,18 +71,18 @@ void MiniUart::uart_init(void)
 	kernel::delay(150);
 	kernel::put32(GPPUDCLK0,0);
 
-	REGS_AUX->enables = 1;
-	REGS_AUX->mu_control = 0;
-        REGS_AUX->mu_ier = 0;
-	REGS_AUX->mu_lcr = 3;
-	REGS_AUX->mu_mcr = 0;
+	get_aux()->get_aux_regs_ptr()->enables = 1;
+	get_aux()->get_aux_regs_ptr()->mu_control = 0;
+        get_aux()->get_aux_regs_ptr()->mu_ier = 0;
+	get_aux()->get_aux_regs_ptr()->mu_lcr = 3;
+	get_aux()->get_aux_regs_ptr()->mu_mcr = 0;
 #if RPI_VERSION == 3
-	REGS_AUX->mu_baud_rate = 270;             //Set baud rate to 115200
+	get_aux()->get_aux_regs_ptr()->mu_baud_rate = 270;             //Set baud rate to 115200
 #endif
 
 #if RPI_VERSION == 4
-	REGS_AUX->mu_baud_rate = 541;             //Set baud rate to 115200
+	get_aux()->get_aux_regs_ptr()->mu_baud_rate = 541;             //Set baud rate to 115200
 #endif
 
-	REGS_AUX->mu_control = 3;               //Finally, enable transmitter and receiver
+	get_aux()->get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
 }
