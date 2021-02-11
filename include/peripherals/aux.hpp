@@ -3,9 +3,6 @@
 #include "types.hpp"
 #include "peripherals/base.hpp"
 
-class Aux {
-
-private:
     struct AuxRegs {
 	reg32 irq_status;
 	reg32 enables;
@@ -23,10 +20,5 @@ private:
 	reg32 mu_baud_rate;
     };
 
-public:
-    struct AuxRegs *get_aux_regs_ptr()
-    {
-	    return (struct AuxRegs *)(PBASE + 0x00215000);
-    }
-};
+#define REGS_AUX ((struct AuxRegs *)(PBASE + 0x00215000))
 

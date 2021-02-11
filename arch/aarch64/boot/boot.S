@@ -9,7 +9,8 @@ _start:
 	cbz	x0, master		// Hang for all non-primary CPU
 	b	proc_hang
 
-proc_hang: 
+proc_hang:
+	wfe 
 	b 	proc_hang
 
 master:
