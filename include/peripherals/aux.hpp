@@ -4,7 +4,6 @@
 #include "peripherals/base.hpp"
 
 class Aux {
-
 private:
     struct AuxRegs {
 	reg32 irq_status;
@@ -24,9 +23,10 @@ private:
     };
 
 public:
-    struct AuxRegs *get_aux_regs_ptr()
+    struct AuxRegs *get_aux_regs_ptr() 
     {
-	    return (struct AuxRegs *)(PBASE + 0x00215000);
+	return reinterpret_cast<struct AuxRegs *>(PBASE + 0x00215000);	    
     }
 };
+
 

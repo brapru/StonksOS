@@ -8,14 +8,12 @@ MiniUart::MiniUart()
 	uart_init();
 }
 
-void MiniUart::uart_send(char c)
+void MiniUart::uart_send(u32 c)
 {
 	while(1) {
 		if(get_aux()->get_aux_regs_ptr()->mu_lsr & 0x20) 
 			break;
 	}
-	if (c == '\n')
-		get_aux()->get_aux_regs_ptr()->mu_io = '\r';
 
 	get_aux()->get_aux_regs_ptr()->mu_io = c;
 }
@@ -26,14 +24,18 @@ char MiniUart::uart_recv(void)
 		if(get_aux()->get_aux_regs_ptr()->mu_lsr & 0x01) 
 			break;
 	}
-	char c = get_aux()->get_aux_regs_ptr()->mu_io & 0xFF;
+	char c = (char)get_aux()->get_aux_regs_ptr()->mu_io & 0xFF;
 	return(c=='\r'?'\n':c);
 }
 
 void MiniUart::uart_send_string(const char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
-		uart_send((char)str[i]);
+		if (str[i] == '\n') 
+		{
+			uart_send('\r');
+		}
+		uart_send(str[i]);
 	}
 }
 
@@ -49,27 +51,18 @@ void MiniUart::uart_hex(unsigned int d)
 	}	    
 }
 
-Aux *MiniUart::get_aux(void)
-{
-	return &aux;
-}
+#define TXD 14
+#define RXD 15
 
 void MiniUart::uart_init(void)
 {
-	unsigned int selector;
+	//Gpio *gpio = get_gpio();
 
-	selector = kernel::get32(GPFSEL1);
-	selector &= ~(7<<12);                   // clean gpio14
-	selector |= 2<<12;                      // set alt5 for gpio14
-	selector &= ~(7<<15);                   // clean gpio15
-	selector |= 2<<15;                      // set alt5 for gpio15
-	kernel::put32(GPFSEL1,selector);
+	gpio_pin_set_func(TXD, GFAlt5);
+	gpio_pin_set_func(RXD, GFAlt5);
 
-	kernel::put32(GPPUD,0);
-	kernel::delay(150);
-	kernel::put32(GPPUDCLK0,(1<<14)|(1<<15));
-	kernel::delay(150);
-	kernel::put32(GPPUDCLK0,0);
+	gpio_pin_enable(TXD);
+	gpio_pin_enable(RXD);
 
 	get_aux()->get_aux_regs_ptr()->enables = 1;
 	get_aux()->get_aux_regs_ptr()->mu_control = 0;
@@ -85,4 +78,7 @@ void MiniUart::uart_init(void)
 #endif
 
 	get_aux()->get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
+	//uart_send('\r');
+	//uart_send('\n');
+	//uart_send('\n');
 }
