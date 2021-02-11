@@ -8,14 +8,12 @@ MiniUart::MiniUart()
 	uart_init();
 }
 
-void MiniUart::uart_send(char c)
+void MiniUart::uart_send(u32 c)
 {
 	while(1) {
 		if(REGS_AUX->mu_lsr & 0x20) 
 			break;
 	}
-	if (c == '\n')
-		REGS_AUX->mu_io = '\r';
 
 	REGS_AUX->mu_io = c;
 }
@@ -26,14 +24,18 @@ char MiniUart::uart_recv(void)
 		if(REGS_AUX->mu_lsr & 0x01) 
 			break;
 	}
-	char c = REGS_AUX->mu_io & 0xFF;
+	char c = (char)REGS_AUX->mu_io & 0xFF;
 	return(c=='\r'?'\n':c);
 }
 
 void MiniUart::uart_send_string(const char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
-		uart_send((char)str[i]);
+		if (str[i] == '\n') 
+		{
+			uart_send('\r');
+		}
+		uart_send(str[i]);
 	}
 }
 
@@ -76,4 +78,7 @@ void MiniUart::uart_init(void)
 #endif
 
 	REGS_AUX->mu_control = 3;               //Finally, enable transmitter and receiver
+	//uart_send('\r');
+	//uart_send('\n');
+	//uart_send('\n');
 }

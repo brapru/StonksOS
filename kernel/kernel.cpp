@@ -4,7 +4,7 @@
 extern "C" [[noreturn]] void kernel_main(){
 	
 	MiniUart mu;
-	mu.uart_send_string("\r\nWelcome to StonksOS.\r\n");
+	mu.uart_send_string("\r\n\r\n\r\n\r\n\r\n\r\nWelcome to StonksOS.\r\n");
 
 	while(1){
 		mu.uart_send(mu.uart_recv());

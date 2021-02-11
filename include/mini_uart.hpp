@@ -1,4 +1,6 @@
 #pragma once
+
+#include "types.hpp"
 #include "peripherals/aux.hpp"
 #include "peripherals/gpio.hpp"
 
@@ -11,7 +13,7 @@ class MiniUart
 	    MiniUart();
 	    
 	    char uart_recv(void);
-	    void uart_send(char c);
+	    void uart_send(u32 c);
 	    void uart_send_string(const char *);
 	    void uart_hex(unsigned int);
 };
