@@ -11,12 +11,12 @@ public:
 	const u32 MBOX_REQUEST = 0;
 
 	const u32 VIDEOCORE_MBOX = (PBASE+0x0000B880);
-	volatile u32 *MBOX_READ = ((volatile u32*)(VIDEOCORE_MBOX+0x0));
-	volatile u32 *MBOX_POLL = ((volatile u32*)(VIDEOCORE_MBOX+0x10));
-	volatile u32 *MBOX_SENDER = ((volatile u32*)(VIDEOCORE_MBOX+0x14));
-	volatile u32 *MBOX_STATUS = ((volatile u32*)(VIDEOCORE_MBOX+0x18));
-	volatile u32 *MBOX_CONFIG = ((volatile u32*)(VIDEOCORE_MBOX+0x1C));
-	volatile u32 *MBOX_WRITE = ((volatile u32*)(VIDEOCORE_MBOX+0x20));
+        volatile u32 *MBOX_READ = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x0);
+	volatile u32 *MBOX_POLL = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x10);
+	volatile u32 *MBOX_SENDER = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x14);
+	volatile u32 *MBOX_STATUS = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x18);
+	volatile u32 *MBOX_CONFIG = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x1C);
+	volatile u32 *MBOX_WRITE = reinterpret_cast<volatile u32*>(VIDEOCORE_MBOX+0x20);
 	const u32 MBOX_RESPONSE = 0x80000000;
 	const u32 MBOX_FULL = 0x80000000;
 	const u32 MBOX_EMPTY = 0x40000000;
