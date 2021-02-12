@@ -20,3 +20,5 @@ using int32_t = i32;
 using int64_t = i64;
 
 using reg32 = volatile u32;
+
+typedef __SIZE_TYPE__ size_t;
