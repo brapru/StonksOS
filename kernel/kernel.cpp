@@ -6,8 +6,9 @@ extern "C" [[noreturn]] void kernel_main(){
 	
 	Stdio stdio;
 	MiniUart mu;
-	stdio.printf("\r\n\r\n\r\n\r\n\r\n\r\nWelcome to StonksOS.\r\n");
-	stdio.puts("\r\n\r\n\r\n\r\n\r\n\r\nWelcome to StonksOS.\r\n");
+
+	stdio.printf("\r\n\r\n\r\nWelcome to StonksOS.");
+	stdio.puts("\r\n\r\n\r\nWelcome to StonksOS.\r\n");
 
 	while(1){
 		char c = mu.uart_recv();

@@ -6,7 +6,7 @@
 #include <stdarg.h>
 
 bool Stdio::print(const char* data, size_t length) {
-	const unsigned char* bytes = (const unsigned char *)data;
+	const unsigned char* bytes = reinterpret_cast<const unsigned char *>(data);
 	for (size_t i = 0; i < length; i++)
 		if (putchar(bytes[i]) == EOF)
 			return false;
@@ -22,6 +22,7 @@ i32 Stdio::printf(const char* __restrict fmt, ...) {
 	{
 		size_t maxrem = INT_MAX - written;
 
+
 		if (fmt[0] != '%' || fmt[1] == '%') {
 			if (fmt[0] == '%')
 				fmt++;
@@ -34,6 +35,7 @@ i32 Stdio::printf(const char* __restrict fmt, ...) {
 			}
 			if (!print(fmt, amount))
 				return -1;
+			
 			fmt += amount;
 			written += amount;
 			continue;
@@ -76,8 +78,9 @@ i32 Stdio::printf(const char* __restrict fmt, ...) {
 			written += len;
 			fmt += len;
 		}
-	}
 
+	}
+	
 	va_end(parameters);
 	return written;
 }

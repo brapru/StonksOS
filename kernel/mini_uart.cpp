@@ -8,13 +8,12 @@ MiniUart::MiniUart()
 	uart_init();
 }
 
-void MiniUart::uart_send(u32 c)
+void MiniUart::uart_send(char c)
 {
 	while(1) {
 		if(get_aux()->get_aux_regs_ptr()->mu_lsr & 0x20) 
 			break;
 	}
-
 	get_aux()->get_aux_regs_ptr()->mu_io = c;
 }
 
@@ -31,10 +30,6 @@ char MiniUart::uart_recv(void)
 void MiniUart::uart_send_string(const char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
-		if (str[i] == '\n') 
-		{
-			uart_send('\r');
-		}
 		uart_send(str[i]);
 	}
 }

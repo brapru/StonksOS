@@ -18,6 +18,6 @@ public:
 	String *get_string_object(void) { return &str_o; }
 
 	i32 printf(const char * __restrict, ...);
-	i32 putchar(i32);
+	char putchar(char);
 	i32 puts(const char *);	
 };

@@ -5,11 +5,12 @@
 #include "mini_uart.hpp"
 #endif
 
-i32 Stdio::putchar(i32 ic)
+char Stdio::putchar(char ic)
 {
 	#if defined(__is_libk)
-	char c = static_cast<char>(ic);
-	get_miniuart_object()->uart_send_string(&c);
+	if (ic == '\n')
+	    get_miniuart_object()->uart_send('\r');
+	get_miniuart_object()->uart_send(ic);
 	#else
 	//TODO: implement write system call here
 	#endif
