@@ -8,15 +8,17 @@ class MiniUart
 {
 	private:
 	    Aux aux;
+	    Gpio gpio;
 
 	    void uart_init(void);
 
 	public:
 	    MiniUart();
 	    
-	    Aux *get_aux() { return &aux; }
+	    Aux *get_aux_object() { return &aux; }
+	    Gpio *get_gpio_object() { return &gpio; }
 	    char uart_recv(void);
-	    void uart_send(u32 c);
+	    void uart_send(char c);
 	    void uart_send_string(const char *);
 	    void uart_hex(unsigned int);
 };

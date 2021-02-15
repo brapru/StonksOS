@@ -4,7 +4,8 @@ RASPI=4
 SRCDIR=kernel
 BUILDDIR=build
 INCLUDEDIRS=-Iinclude \
-	    -Iinclude/peripherals
+	    -Iinclude/peripherals \
+	    -Iinclude/stonksos
 
 CTOOL=aarch64-linux-gnu
 CC=$(CTOOL)-gcc
@@ -16,11 +17,14 @@ GDB=$(CTOOL)-gdb
 CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding $(INCLUDEDIRS) -mgeneral-regs-only
 CFLAGS += -DRPI_VERSION=$(RASPI)
 
+LIBKFLAGS = -D__is_libk
+
 .PHONY: all clean
 
 all: $(BUILDDIR)/$(TARGET).img
 
 CXXSOURCES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
+CXXSOURCES += $(notdir $(wildcard lib/*/*.cpp))
 ASMSOURCES=$(notdir $(wildcard $(SRCDIR)/*.S))
 ASMSOURCES += $(notdir $(wildcard arch/aarch64/boot/*.S))
 
@@ -42,6 +46,18 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.S
 $(BUILDDIR)/%.o: arch/aarch64/boot/%.S
 	@mkdir -p build
 	$(CXX) $(INCLUDEDIRS) -MMD -c $< -o $@
+
+$(BUILDDIR)/%.o: lib/string/%.cpp
+	@mkdir -p build
+	$(CXX) $(CFLAGS) $(LIBKFLAGS) -MMD -c $< -o $@
+
+$(BUILDDIR)/%.o: lib/stdio/%.cpp
+	@mkdir -p build
+	$(CXX) $(CFLAGS) $(LIBKFLAGS) -MMD -c $< -o $@
+
+$(BUILDDIR)/%.o: lib/stdlib/%.cpp
+	@mkdir -p build
+	$(CXX) $(CFLAGS) $(LIBKFLAGS) -MMD -c $< -o $@
 
 rpi3:
 	$(MAKE) RASPI=3
