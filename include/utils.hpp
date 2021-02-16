@@ -21,4 +21,13 @@ inline void put32(unsigned long address, unsigned int value){
 	asm volatile("str w1, [x0]" : : "r" (address), "r" (value));
 }
 
+inline unsigned int get_el(void)
+{
+	unsigned int level;
+	asm volatile("mrs x0, CurrentEL;"
+		     "lsr %0, %0, #2;"
+		     : "=r" (level));
+	return level;
+}
+
 }
