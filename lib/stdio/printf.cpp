@@ -20,16 +20,14 @@ static inline i32 isdigit(i32 c)
         return '0' <= c && c <= '9';
 }
 
-static int skip_atoi(const char **s)
+static i32 skip_atoi(const char **s)
 {
-	int i = 0;
+	i32 i = 0;
 
 	while (isdigit(**s))
 		i = i * 10 + *((*s)++) - '0';
 	return i;
 }
-
-#define NULL 0
 
 #define ZEROPAD	1		/* pad with zero */
 #define SIGN	2		/* unsigned/signed long */
@@ -40,19 +38,19 @@ static int skip_atoi(const char **s)
 #define SPECIAL	64		/* 0x */
 
 #define __do_div(n, base) ({ \
-int __res; \
-__res = ((unsigned long) n) % (unsigned) base; \
-n = ((unsigned long) n) / (unsigned) base; \
+i32 __res; \
+__res = ((u64) n) % (unsigned) base; \
+n = ((u64) n) / (unsigned) base; \
 __res; })
 
-static char *number(char *str, long num, int base, int size, int precision,
-		    int type)
+static char *number(char *str, long num, i32 base, i32 size, i32 precision,
+		    i32 type)
 {
 	static const char digits[17] = "0123456789ABCDEF";
 
 	char tmp[66];
 	char c, sign, locase;
-	int i;
+	i32 i;
 
 	locase = (type & SMALL);
 	if (type & LEFT)
@@ -114,20 +112,20 @@ static char *number(char *str, long num, int base, int size, int precision,
 	return str;
 }
 
-int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
+i32 Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 {
-	int len;
-	unsigned long num;
-	int i, base;
+	i32 len;
+	u64 num;
+	i32 i, base;
 	char *str;
 	const char *s;
 
-	int flags;		/* flags to number() */
+	i32 flags;		/* flags to number() */
 
-	int field_width;	/* width of output field */
-	int precision;		/* min. # of digits for integers; max
+	i32 field_width;	/* width of output field */
+	i32 precision;		/* min. # of digits for integers; max
 				   number of chars for from string */
-	int qualifier;		/* 'h', 'l', or 'L' for integer fields */
+	i32 qualifier;		/* 'h', 'l', or 'L' for integer fields */
 
 	for (str = buf; *fmt; ++fmt) {
 		if (*fmt != '%') {
@@ -161,7 +159,7 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 			field_width = skip_atoi(&fmt);
 		else if (*fmt == '*') {
 			++fmt;
-			field_width = va_arg(args, int);
+			field_width = va_arg(args, i32);
 			if (field_width < 0) {
 				field_width = -field_width;
 				flags |= LEFT;
@@ -175,7 +173,7 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 				precision = skip_atoi(&fmt);
 			else if (*fmt == '*') {
 				++fmt;
-				precision = va_arg(args, int);
+				precision = va_arg(args, i32);
 			}
 			if (precision < 0)
 				precision = 0;
@@ -194,7 +192,7 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 			if (!(flags & LEFT))
 				while (--field_width > 0)
 					*str++ = ' ';
-			*str++ = (unsigned char)va_arg(args, int);
+			*str++ = (unsigned char)va_arg(args, i32);
 			while (--field_width > 0)
 				*str++ = ' ';
 			continue;
@@ -218,7 +216,7 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 				flags |= ZEROPAD;
 			}
 			str = number(str,
-				     (unsigned long)va_arg(args, void *), 16,
+				     (u64)va_arg(args, void *), 16,
 				     field_width, precision, flags);
 			continue;
 
@@ -227,7 +225,7 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 				long *ip = va_arg(args, long *);
 				*ip = (str - buf);
 			} else {
-				int *ip = va_arg(args, int *);
+				i32 *ip = va_arg(args, i32 *);
 				*ip = (str - buf);
 			}
 			continue;
@@ -261,25 +259,25 @@ int Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 			continue;
 		}
 		if (qualifier == 'l')
-			num = va_arg(args, unsigned long);
+			num = va_arg(args, u64);
 		else if (qualifier == 'h') {
-			num = (unsigned short)va_arg(args, int);
+			num = (u16)va_arg(args, i32);
 			if (flags & SIGN)
-				num = (short)num;
+				num = (i16)num;
 		} else if (flags & SIGN)
-			num = va_arg(args, int);
+			num = va_arg(args, i32);
 		else
-			num = va_arg(args, unsigned int);
+			num = va_arg(args, u32);
 		str = number(str, num, base, field_width, precision, flags);
 	}
 	*str = '\0';
 	return str - buf;
 }
 
-int Stdio::sprintf(char *buf, const char *fmt, ...)
+i32 Stdio::sprintf(char *buf, const char *fmt, ...)
 {
 	va_list args;
-	int i;
+	i32 i;
 
 	va_start(args, fmt);
 	i = vsprintf(buf, fmt, args);
@@ -287,11 +285,11 @@ int Stdio::sprintf(char *buf, const char *fmt, ...)
 	return i;
 }
 
-int Stdio::printf(const char *fmt, ...)
+i32 Stdio::printf(const char *fmt, ...)
 {
 	char printf_buf[1024];
 	va_list args;
-	int printed;
+	i32 printed;
 
 	va_start(args, fmt);
 	printed = vsprintf(printf_buf, fmt, args);
