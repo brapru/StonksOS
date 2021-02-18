@@ -62,7 +62,7 @@ void MiniUart::uart_init(void)
 
 	aux->get_aux_regs_ptr()->enables = 1;
 	aux->get_aux_regs_ptr()->mu_control = 0;
-        aux->get_aux_regs_ptr()->mu_ier = 0;
+        aux->get_aux_regs_ptr()->mu_ier = 2;
 	aux->get_aux_regs_ptr()->mu_lcr = 3;
 	aux->get_aux_regs_ptr()->mu_mcr = 0;
 #if RPI_VERSION == 3

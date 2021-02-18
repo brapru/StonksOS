@@ -37,10 +37,36 @@ void show_invalid_entry_message(u32 type, u64 esr, u64 address){
 
 void IRQ::enable_interrupt_controller(void){
 #if RPI_VERSION == 4
-	put32(get_itq_regs_ptr->irq0_enable_0, (1<<1));	
+	get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
 #endif
 
 #if RPI_VERSION == 3
-	put32(get_itq_regs_ptr->irq0_enable_0, (1<<1));	
+	get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
 #endif
-} 
+}
+
+void handle_irq(void){
+	u32 irq;
+
+#if RPI_VERSION == 4
+	irq = get_irq_regs_ptr()->irq_pending_0;
+#endif
+
+#if RPI_VERSION == 3
+	irq = get_irq_regs_ptr()->irq_pending_1;
+#endif
+
+	while(irq) {
+		if (irq & AUX_IRQ){
+			irq &= ~AUX_IRQ;
+		
+			while((get_irq_regs_ptr()->mu_iir & 4) == 4){
+				stdio::printf("UART Recv: ");
+				uart_send(uart_recv());
+				stdio::printf("\n");
+			}
+		}
+	}
+
+
+}

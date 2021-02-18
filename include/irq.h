@@ -1,5 +1,9 @@
 #pragma once
 
+enum vc_irqs {
+	AUX_IRQ = (1 << 29)
+};
+
 class IRQ {
 private:
 	struct IRQRegs_2711 {
