@@ -9,4 +9,5 @@ public:
 	void *memmove(void*, const void*, size_t);
 	void *memset (void*, i32, size_t);
 	size_t strlen(const char*);
+	size_t strnlen(const char *, size_t);
 };

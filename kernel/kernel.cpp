@@ -9,9 +9,7 @@ extern "C" [[noreturn]] void kernel_main(){
 	MiniUart mu;
 
 	stdio.puts("\n\nWelcome to StonksOS.\n");
-	stdio.puts("Working at exception level: ");
-	mu.uart_hex(kernel::get_el());
-	stdio.puts("\n");
+	stdio.printf("Working at exception level: %d\n", kernel::get_el());
 
 	while(1){
 		char c = mu.uart_recv();
