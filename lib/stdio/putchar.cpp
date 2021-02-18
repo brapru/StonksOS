@@ -9,8 +9,8 @@ char Stdio::putchar(char ic)
 {
 	#if defined(__is_libk)
 	if (ic == '\n')
-	    get_miniuart_object()->uart_send('\r');
-	get_miniuart_object()->uart_send(ic);
+	    g_miniuart.uart_send('\r');
+	g_miniuart.uart_send(ic);
 	#else
 	//TODO: implement write system call here
 	#endif
