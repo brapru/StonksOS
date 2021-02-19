@@ -37,7 +37,7 @@ $(BUILDDIR)/$(TARGET).img: $(SRCDIR)/linker.ld $(OBJECTS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p build
-	$(CXX) $(CFLAGS) -c -MMD $< -o $@
+	$(CXX) $(CFLAGS) $(INCLUDEDIRS) -c -MMD $< -o $@
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.S
 	@mkdir -p build

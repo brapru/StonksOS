@@ -8,10 +8,9 @@ extern "C" [[noreturn]] void kernel_main(){
 	
 	Stdio stdio;
 	MiniUart mu;
-	IRQ irq;
 
 	irq_init_vectors();
-	irq.enable_interrupt_controller();
+	IRQ::enable_interrupt_controller();
 	irq_enable();
 
 	stdio.puts("\n\nWelcome to StonksOS.\n");
