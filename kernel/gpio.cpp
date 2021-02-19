@@ -2,8 +2,6 @@
 #include "utils.hpp"
 #include "types.hpp"
 
-Gpio g_gpio;
-
 void Gpio::gpio_pin_set_func(u8 pin, GpioFunc f) 
 {
 	u8 bitstart = (pin * 3) % 30;

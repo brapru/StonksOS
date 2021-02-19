@@ -29,4 +29,4 @@ public:
     }
 };
 
-extern Aux g_aux;
+

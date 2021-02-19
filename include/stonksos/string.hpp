@@ -11,5 +11,3 @@ public:
 	size_t strlen(const char*);
 	size_t strnlen(const char *, size_t);
 };
-
-extern String g_string;
