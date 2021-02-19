@@ -24,4 +24,4 @@ using reg32 = volatile u32;
 typedef __SIZE_TYPE__ size_t;
 
 #define NULL 0
-#define EOF -1
+

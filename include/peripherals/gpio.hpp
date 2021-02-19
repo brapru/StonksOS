@@ -47,5 +47,3 @@ public:
     void gpio_pin_set_func(u8 pinNumber, GpioFunc func);
     void gpio_pin_enable(u8 pinNumber);
 };
-
-extern Gpio g_gpio;

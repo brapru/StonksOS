@@ -199,7 +199,7 @@ i32 Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 
 		case 's':
 			s = va_arg(args, char *);
-			len = g_string.strnlen(s, precision);
+			len = get_string_object()->strnlen(s, precision);
 
 			if (!(flags & LEFT))
 				while (len < field_width--)
