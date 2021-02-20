@@ -19,7 +19,7 @@ extern "C" [[noreturn]] void kernel_main(){
 	stdio.puts("\n");
 
 	while(1){
-		char c = mu.uart_recv();
-		stdio.putchar(c);
+		//char c = mu.uart_recv();
+		//stdio.putchar(c);
 	}
 }
