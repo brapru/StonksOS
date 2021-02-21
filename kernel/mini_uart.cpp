@@ -2,6 +2,7 @@
 #include "utils.hpp"
 #include "peripherals/gpio.hpp"
 #include "peripherals/aux.hpp"
+#include "stonksos/stdio.hpp"
 
 static Aux s_aux;
 static Gpio s_gpio;
@@ -65,6 +66,7 @@ void MiniUart::uart_init(void)
         s_aux.get_aux_regs_ptr()->mu_ier = 0;
 	s_aux.get_aux_regs_ptr()->mu_lcr = 3;
 	s_aux.get_aux_regs_ptr()->mu_mcr = 0;
+
 #if RPI_VERSION == 3
 	s_aux.get_aux_regs_ptr()->mu_baud_rate = 270;             //Set baud rate to 115200
 #endif
@@ -74,8 +76,13 @@ void MiniUart::uart_init(void)
 #endif
 
 	s_aux.get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
-	//uart_send('\r');
-	//uart_send('\n');
-	//uart_send('\n');
+
+        Stdio::printf("\nValue of mu lcr is: %x\n", s_aux.get_aux_regs_ptr()->mu_lcr);
+        Stdio::printf("\nValue of mu mcr is: %x\n", s_aux.get_aux_regs_ptr()->mu_mcr);
+        Stdio::printf("\nValue of mu ier is: %x\n", s_aux.get_aux_regs_ptr()->mu_ier);
+        Stdio::printf("\nValue of mu iir is: %x\n", s_aux.get_aux_regs_ptr()->mu_iir);
+        Stdio::printf("\nValue of mu enables is: %x\n", s_aux.get_aux_regs_ptr()->enables);
+        Stdio::printf("\nValue of mu control is: %x\n", s_aux.get_aux_regs_ptr()->mu_control);
+        Stdio::printf("\nValue of mu baud is: %x\n", s_aux.get_aux_regs_ptr()->mu_baud_rate);
 }
 

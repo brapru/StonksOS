@@ -51,7 +51,8 @@ extern "C" void handle_irq(){
 		if (irq & AUX_IRQ){
 			irq &= ~AUX_IRQ;
 		
-			while((s_mu.get_aux_object()->get_aux_regs_ptr()->mu_iir & 4 == 4)){
+			//while((s_mu.get_aux_object()->get_aux_regs_ptr()->mu_iir & 4 == 4)){
+			while((true)){
 				stdio.puts("UART Recv: ");
 				s_mu.uart_send(s_mu.uart_recv());
 				stdio.printf("\n");
