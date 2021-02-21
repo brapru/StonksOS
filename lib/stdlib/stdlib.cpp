@@ -1,6 +1,8 @@
 #include "stonksos/stdio.hpp"
 #include "stonksos/stdlib.hpp"
 
+using namespace Stdlib;
+
 __attribute__((__noreturn__))
 void Stdlib::abort(void)
 {

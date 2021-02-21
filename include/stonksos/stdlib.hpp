@@ -1,9 +1,8 @@
 #pragma once
 #include "stonksos/stdio.hpp"
 
-class Stdlib 
+namespace Stdlib 
 {
-public:
 	__attribute__((__noreturn__))
 	void abort(void);
 };

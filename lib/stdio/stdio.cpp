@@ -4,7 +4,6 @@
 #include <stdarg.h>
 
 static Stdio s_stdio;
-static String s_string;
 
 bool Stdio::print(const char *data, size_t length)
 {
@@ -207,7 +206,7 @@ i32 Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 
 		case 's':
 			s = va_arg(args, char *);
-			len = s_string.strnlen(s, precision);
+			len = String::strnlen(s, precision);
 
 			if (!(flags & LEFT))
 				while (len < field_width--)
