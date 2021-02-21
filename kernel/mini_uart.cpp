@@ -3,6 +3,9 @@
 #include "peripherals/gpio.hpp"
 #include "peripherals/aux.hpp"
 
+static Aux s_aux;
+static Gpio s_gpio;
+
 MiniUart::MiniUart()
 {
 	uart_init();
@@ -11,19 +14,19 @@ MiniUart::MiniUart()
 void MiniUart::uart_send(char c)
 {
 	while(1) {
-		if(g_aux.get_aux_regs_ptr()->mu_lsr & 0x20) 
+		if(s_aux.get_aux_regs_ptr()->mu_lsr & 0x20) 
 			break;
 	}
-	g_aux.get_aux_regs_ptr()->mu_io = c;
+	s_aux.get_aux_regs_ptr()->mu_io = c;
 }
 
 char MiniUart::uart_recv(void)
 {
 	while(1) {
-		if(g_aux.get_aux_regs_ptr()->mu_lsr & 0x01) 
+		if(s_aux.get_aux_regs_ptr()->mu_lsr & 0x01) 
 			break;
 	}
-	char c = (char)g_aux.get_aux_regs_ptr()->mu_io & 0xFF;
+	char c = (char)s_aux.get_aux_regs_ptr()->mu_io & 0xFF;
 	return(c=='\r'?'\n':c);
 }
 
@@ -51,26 +54,26 @@ void MiniUart::uart_hex(unsigned int d)
 
 void MiniUart::uart_init(void)
 {
-	g_gpio.gpio_pin_set_func(TXD, Gpio::GFAlt5);
-	g_gpio.gpio_pin_set_func(RXD, Gpio::GFAlt5);
+	s_gpio.gpio_pin_set_func(TXD, Gpio::GFAlt5);
+	s_gpio.gpio_pin_set_func(RXD, Gpio::GFAlt5);
 
-	g_gpio.gpio_pin_enable(TXD);
-	g_gpio.gpio_pin_enable(RXD);
+	s_gpio.gpio_pin_enable(TXD);
+	s_gpio.gpio_pin_enable(RXD);
 
-	g_aux.get_aux_regs_ptr()->enables = 1;
-	g_aux.get_aux_regs_ptr()->mu_control = 0;
-        g_aux.get_aux_regs_ptr()->mu_ier = 0;
-	g_aux.get_aux_regs_ptr()->mu_lcr = 3;
-	g_aux.get_aux_regs_ptr()->mu_mcr = 0;
+	s_aux.get_aux_regs_ptr()->enables = 1;
+	s_aux.get_aux_regs_ptr()->mu_control = 0;
+        s_aux.get_aux_regs_ptr()->mu_ier = 0;
+	s_aux.get_aux_regs_ptr()->mu_lcr = 3;
+	s_aux.get_aux_regs_ptr()->mu_mcr = 0;
 #if RPI_VERSION == 3
-	g_aux.get_aux_regs_ptr()->mu_baud_rate = 270;             //Set baud rate to 115200
+	s_aux.get_aux_regs_ptr()->mu_baud_rate = 270;             //Set baud rate to 115200
 #endif
 
 #if RPI_VERSION == 4
-	g_aux.get_aux_regs_ptr()->mu_baud_rate = 541;             //Set baud rate to 115200
+	s_aux.get_aux_regs_ptr()->mu_baud_rate = 541;             //Set baud rate to 115200
 #endif
 
-	g_aux.get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
+	s_aux.get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
 	//uart_send('\r');
 	//uart_send('\n');
 	//uart_send('\n');

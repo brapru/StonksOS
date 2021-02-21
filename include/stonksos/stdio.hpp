@@ -5,8 +5,6 @@
 #include "mini_uart.hpp"
 #include "types.hpp"
 
-#define EOF (-1)
-
 class Stdio 
 {
 private:

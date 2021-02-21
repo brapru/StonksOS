@@ -23,5 +23,3 @@ void Gpio::gpio_pin_enable(u8 pin)
 	get_gpio_regs_ptr()->pupd_enable = 0;
 	get_gpio_regs_ptr()->pupd_enable_clocks[pin / 32] = 0;
 }
-
-Gpio g_gpio;
