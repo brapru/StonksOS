@@ -6,10 +6,10 @@ void Stdlib::abort(void)
 {
 #if defined(__is_libk)
 	//TODO: add proper kernel panic
-	g_stdio.printf("kernel: panic: abort()\n");
+	Stdio::printf("kernel: panic: abort()\n");
 #else
 	//TODO: abnormally terminate process as if by SIGABRT
-	g_stdio.printf("abort()\n");
+	Stdio::printf("abort()\n");
 #endif
 	while (1) { };
 	__builtin_unreachable();
