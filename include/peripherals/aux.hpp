@@ -28,5 +28,3 @@ public:
 	return reinterpret_cast<struct AuxRegs *>(PBASE + 0x00215000);	    
     }
 };
-
-

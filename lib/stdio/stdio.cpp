@@ -3,6 +3,8 @@
 #include "types.hpp"
 #include <stdarg.h>
 
+static Stdio s_stdio;
+
 bool Stdio::print(const char *data, size_t length)
 {
         const unsigned char *bytes = reinterpret_cast<const unsigned char *>(data);
@@ -10,6 +12,11 @@ bool Stdio::print(const char *data, size_t length)
             if (putchar(bytes[i]) == EOF)
                 return false;
         return true;
+}
+
+void Stdio::init_miniuart(MiniUart *m)
+{
+	s_stdio.mu = m;
 }
 
 //adapted source code from
@@ -199,7 +206,7 @@ i32 Stdio::vsprintf(char *buf, const char *fmt, va_list args)
 
 		case 's':
 			s = va_arg(args, char *);
-			len = get_string_object()->strnlen(s, precision);
+			len = String::strnlen(s, precision);
 
 			if (!(flags & LEFT))
 				while (len < field_width--)
@@ -280,7 +287,7 @@ i32 Stdio::sprintf(char *buf, const char *fmt, ...)
 	i32 i;
 
 	va_start(args, fmt);
-	i = vsprintf(buf, fmt, args);
+	i = s_stdio.vsprintf(buf, fmt, args);
 	va_end(args);
 	return i;
 }
@@ -292,10 +299,47 @@ i32 Stdio::printf(const char *fmt, ...)
 	i32 printed;
 
 	va_start(args, fmt);
-	printed = vsprintf(printf_buf, fmt, args);
+	printed = s_stdio.vsprintf(printf_buf, fmt, args);
 	va_end(args);
 
-	print(printf_buf, printed);
+	s_stdio.print(printf_buf, printed);
 
 	return printed;
+}
+
+char Stdio::getchar(void)
+{
+	char c = s_stdio.mu->uart_recv();
+	return c;
+}
+
+char *Stdio::gets(char *buf, i32 size)
+{
+	char tmp;
+	char *str = buf;
+	while (--size > 0 && (tmp = s_stdio.getchar()) != '\n')
+	{
+		*str++ = tmp;
+	}
+	*str = '\0';
+	return buf;
+}
+
+
+char Stdio::putchar(char ic)
+{
+	#if defined(__is_libk)
+	if (ic == '\n')
+	    s_stdio.mu->uart_send('\r');
+	s_stdio.mu->uart_send(ic);
+	#else
+	//TODO: implement write system call here
+	#endif
+
+	return ic;
+}
+
+int Stdio::puts(const char *str)
+{
+	return s_stdio.printf("%s", str);
 }
