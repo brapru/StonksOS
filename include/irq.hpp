@@ -47,7 +47,6 @@ private:
 	#endif	
 
 public:
-	IRQ();
 	static IRQRegs *get_irq_regs_ptr()
 	{
 		return reinterpret_cast<IRQRegs *>(PBASE + 0x0000B200);
