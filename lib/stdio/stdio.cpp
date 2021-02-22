@@ -341,5 +341,5 @@ char Stdio::putchar(char ic)
 
 int Stdio::puts(const char *str)
 {
-	return s_stdio.printf("%s", str);
+	return s_stdio.printf("%s\n", str);
 }

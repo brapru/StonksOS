@@ -30,4 +30,7 @@ inline unsigned int get_el(void)
 	return level;
 }
 
+inline void mmio_write(i64 reg, u32 val) { *(volatile u32 *)reg = val; }
+inline u32 mmio_read(i64 reg) { return *(volatile u32 *)reg; }
+
 }
