@@ -63,7 +63,7 @@ void MiniUart::uart_init(void)
 
 	s_aux.get_aux_regs_ptr()->enables = 1;
 	s_aux.get_aux_regs_ptr()->mu_control = 0;
-        s_aux.get_aux_regs_ptr()->mu_ier = 0;
+        s_aux.get_aux_regs_ptr()->mu_ier = 0xD;
 	s_aux.get_aux_regs_ptr()->mu_lcr = 3;
 	s_aux.get_aux_regs_ptr()->mu_mcr = 0;
 

@@ -6,7 +6,6 @@
 /*  StonksOS kernel entry point */
 extern "C" [[noreturn]] void kernel_main(){
 	
-	//Stdio stdio;
 	MiniUart mu;
 	Stdio::init_miniuart(&mu);
 
