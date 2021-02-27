@@ -47,26 +47,36 @@ extern "C" void handle_irq(){
 	irq = IRQ::get_irq_regs_ptr()->irq0_pending_1;
 #endif
 
-	switch(irq){
-		case (AUX_IRQ):
-			s_mu.uart_send(s_mu.uart_recv());
-			while((aux.get_aux_regs_ptr()->mu_iir & 4 == 4)){
+	while(irq){
+		if (irq == AUX_IRQ){
+			irq &= ~AUX_IRQ;
+			
+			while((aux.get_aux_regs_ptr()->mu_iir & 4) == 4){
 				s_mu.uart_send(s_mu.uart_recv());
 			}
-		default:
-			Stdio::printf("Unknown pending irq: %x\r\n", irq);	
+
+		}
 	}
+
+	//switch(irq){
+	//	case (irq & AUX_IRQ):
+	//		irq &= ~AUX_IRQ;
+	//		s_mu.uart_send(s_mu.uart_recv());
+	//		//while((aux.get_aux_regs_ptr()->mu_iir & 4 == 4)){
+	//		//	s_mu.uart_send(s_mu.uart_recv());
+	//		//}
+	//	default:
+	//		Stdio::printf("Unknown pending irq: %x\r\n", irq);	
+	//}
 
 }
 
 void IRQ::enable_interrupt_controller(void){
 #if RPI_VERSION == 4
 	get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
-	Stdio::printf("Value of AUX_REG is: %lu", s_irq.get_irq_regs_ptr()->irq0_enable_0);
 #endif
 
 #if RPI_VERSION == 3
-	get_irq_regs_ptr()->irq0_enable_1 = (1 << 29);	
-	Stdio::printf("Value of irq AUX_REG is: %lu", s_irq.get_irq_regs_ptr()->irq0_enable_1);
+	get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
 #endif
 }
