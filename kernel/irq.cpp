@@ -47,36 +47,42 @@ extern "C" void handle_irq(){
 	irq = IRQ::get_irq_regs_ptr()->irq0_pending_1;
 #endif
 
-	while(irq){
-		if (irq == AUX_IRQ){
-			irq &= ~AUX_IRQ;
-			
-			while((aux.get_aux_regs_ptr()->mu_iir & 4) == 4){
-				s_mu.uart_send(s_mu.uart_recv());
-			}
-
+	if (irq & AUX_IRQ){
+		irq &= ~AUX_IRQ;
+		while((aux.get_aux_regs_ptr()->mu_iir & 4) == 4){
+			s_mu.uart_send(s_mu.uart_recv());
 		}
 	}
-
-	//switch(irq){
-	//	case (irq & AUX_IRQ):
-	//		irq &= ~AUX_IRQ;
-	//		s_mu.uart_send(s_mu.uart_recv());
-	//		//while((aux.get_aux_regs_ptr()->mu_iir & 4 == 4)){
-	//		//	s_mu.uart_send(s_mu.uart_recv());
-	//		//}
-	//	default:
-	//		Stdio::printf("Unknown pending irq: %x\r\n", irq);	
-	//}
-
+	else {
+		Stdio::printf("Unknown pending irq: %x\r\n", irq);	
+	}
 }
 
 void IRQ::enable_interrupt_controller(void){
 #if RPI_VERSION == 4
-	get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
+	s_irq.get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
 #endif
 
 #if RPI_VERSION == 3
-	get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
+	s_irq.get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
 #endif
+}
+
+void IRQ::init_vectors(void){
+	asm volatile("adr x0, vectors; "
+		     "msr vbar_el1, x0");
+}
+
+void IRQ::irq_enable(void){
+	asm volatile("msr daifclr, #2");
+}
+
+void IRQ::irq_disable(void){
+	asm volatile("msr daifset, #2");
+}
+
+void IRQ::initialize(void){
+	s_irq.init_vectors();
+	s_irq.enable_interrupt_controller();
+	s_irq.irq_enable();
 }

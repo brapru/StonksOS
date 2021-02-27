@@ -76,13 +76,5 @@ void MiniUart::uart_init(void)
 #endif
 
 	s_aux.get_aux_regs_ptr()->mu_control = 3;               //Finally, enable transmitter and receiver
-
-        Stdio::printf("\nValue of mu lcr is: %x\n", s_aux.get_aux_regs_ptr()->mu_lcr);
-        Stdio::printf("\nValue of mu mcr is: %x\n", s_aux.get_aux_regs_ptr()->mu_mcr);
-        Stdio::printf("\nValue of mu ier is: %x\n", s_aux.get_aux_regs_ptr()->mu_ier);
-        Stdio::printf("\nValue of mu iir is: %x\n", s_aux.get_aux_regs_ptr()->mu_iir);
-        Stdio::printf("\nValue of mu enables is: %x\n", s_aux.get_aux_regs_ptr()->enables);
-        Stdio::printf("\nValue of mu control is: %x\n", s_aux.get_aux_regs_ptr()->mu_control);
-        Stdio::printf("\nValue of mu baud is: %x\n", s_aux.get_aux_regs_ptr()->mu_baud_rate);
 }
 

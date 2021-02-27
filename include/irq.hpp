@@ -1,9 +1,5 @@
 #pragma once
 
-extern "C" void irq_init_vectors();
-extern "C" void irq_enable();
-extern "C" void irq_disable();
-
 enum vc_irqs {
 	AUX_IRQ = (1 << 29)
 };
@@ -51,6 +47,11 @@ public:
 	{
 		return reinterpret_cast<IRQRegs *>(PBASE + 0x0000B200);
 	}
+	
+	void init_vectors(void);
+	void enable_interrupt_controller(void); 
+	void irq_enable(void);
+	void irq_disable(void);
 
-	static void enable_interrupt_controller(void); 
+	static void initialize(void);
 };
