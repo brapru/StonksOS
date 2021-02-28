@@ -1,4 +1,3 @@
-#include "utils.hpp"
 #include "entry.hpp"
 #include "peripherals/aux.hpp"
 #include "irq.hpp"

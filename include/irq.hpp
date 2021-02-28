@@ -33,7 +33,7 @@ private:
 		reg32 irq0_disable_2;
 		reg32 irq0_disable_0;
 	};
-	
+
 	#if RPI_VERSION == 3
 		typedef struct IRQRegs_2837 IRQRegs;
 	#endif
@@ -41,6 +41,11 @@ private:
 	#if RPI_VERSION == 4
 		typedef struct IRQRegs_2711 IRQRegs;
 	#endif	
+	
+	void init_vectors(void);
+	void enable_interrupt_controller(void); 
+	void irq_enable(void);
+	void irq_disable(void);
 
 public:
 	static IRQRegs *get_irq_regs_ptr()
@@ -48,10 +53,5 @@ public:
 		return reinterpret_cast<IRQRegs *>(PBASE + 0x0000B200);
 	}
 	
-	void init_vectors(void);
-	void enable_interrupt_controller(void); 
-	void irq_enable(void);
-	void irq_disable(void);
-
 	static void initialize(void);
 };
