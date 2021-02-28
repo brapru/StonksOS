@@ -52,6 +52,6 @@ public:
 	{
 		return reinterpret_cast<IRQRegs *>(PBASE + 0x0000B200);
 	}
-	
+
 	static void initialize(void);
 };
