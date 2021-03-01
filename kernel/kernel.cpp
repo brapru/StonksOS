@@ -10,7 +10,7 @@ extern "C" [[noreturn]] void kernel_main(){
 	MiniUart mu;
 	Stdio::init_miniuart(&mu);
 
-	IRQ<IRQRegs>::initialize();
+	IRQ::initialize();
 	
 	Stdio::puts("\n\nWelcome to StonksOS.\n");
 	Stdio::printf("Working at exception level: %d\n", kernel::get_el());

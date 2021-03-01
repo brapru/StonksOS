@@ -2,7 +2,7 @@
 
 #include "peripherals.hpp"
 
-#define IRQ_ADDRESS (PBASE + 0x0000B200)
+#define IRQ_BASE_ADDRESS (PBASE + 0x0000B200)
 
 enum vc_irqs {
 	AUX_IRQ = (1 << 29)
@@ -44,15 +44,22 @@ struct IRQRegs_2837 {
 	typedef struct IRQRegs_2711 IRQRegs;
 #endif	
 
-template <class T>
-class IRQ : public Peripheral<T> {
+class IRQ {
 public:
-	IRQ(PhysicalAddress address): Peripheral<T>(address) {};
+	IRQ(PhysicalAddress address = IRQ_BASE_ADDRESS)
+	: m_peripheral(address) 
+	{
+	}
+	
 	static void initialize(void);
-
-private:
+	
 	void init_vectors(void);
 	void enable_interrupt_controller(void); 
 	void irq_enable(void);
 	void irq_disable(void);
+
+	IRQRegs* get_regmap_ptr(void);	
+
+private:
+	Peripheral<IRQRegs> m_peripheral;
 };
