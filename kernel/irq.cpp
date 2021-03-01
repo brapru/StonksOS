@@ -6,7 +6,7 @@
 
 static Aux aux;
 static MiniUart s_mu;
-static IRQ s_irq;
+static IRQ<IRQRegs> s_irq(IRQ_ADDRESS);
 
 const char entry_error_messages[16][32] = {
 	"SYNC_INVALID_EL1t",
@@ -39,11 +39,13 @@ extern "C" void handle_irq(){
 	u32 irq;
 
 #if RPI_VERSION == 4
-	irq = IRQ::get_irq_regs_ptr()->irq0_pending_0;
+	irq = s_irq.get_as_ptr()->irq0_pending_0;
+	//irq = s_irq.get_as_ptr()->irq0_pending_0;
 #endif
 
 #if RPI_VERSION == 3
-	irq = IRQ::get_irq_regs_ptr()->irq0_pending_1;
+	irq = s_irq.get_as_ptr()->irq0_pending_1;
+	//irq = IRQ::get_irq_regs_ptr()->irq0_pending_1;
 #endif
 
 	if (irq & AUX_IRQ){
@@ -57,31 +59,40 @@ extern "C" void handle_irq(){
 	}
 }
 
-void IRQ::enable_interrupt_controller(void){
+template <class T>
+void IRQ<T>::enable_interrupt_controller(void){
 #if RPI_VERSION == 4
-	s_irq.get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
+	//s_irq.get_irq_regs_ptr()->irq0_enable_0 = AUX_IRQ;	
+	s_irq.get_as_ptr()->irq0_enable_0 = AUX_IRQ;
 #endif
 
 #if RPI_VERSION == 3
-	s_irq.get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
+	//s_irq.get_irq_regs_ptr()->irq0_enable_1 = AUX_IRQ;	
+	s_irq.get_as_ptr()->irq0_enable_1 = AUX_IRQ;
 #endif
 }
 
-void IRQ::init_vectors(void){
+template <class T>
+void IRQ<T>::init_vectors(void){
 	asm volatile("adr x0, vectors; "
 		     "msr vbar_el1, x0");
 }
 
-void IRQ::irq_enable(void){
+template <class T>
+void IRQ<T>::irq_enable(void){
 	asm volatile("msr daifclr, #2");
 }
 
-void IRQ::irq_disable(void){
+template <class T>
+void IRQ<T>::irq_disable(void){
 	asm volatile("msr daifset, #2");
 }
 
-void IRQ::initialize(void){
+template <class T>
+void IRQ<T>::initialize(void){
 	s_irq.init_vectors();
 	s_irq.enable_interrupt_controller();
 	s_irq.irq_enable();
 }
+
+template class IRQ<IRQRegs>;

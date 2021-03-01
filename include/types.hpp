@@ -21,6 +21,8 @@ using int64_t = i64;
 
 using reg32 = volatile u32;
 
+using PhysicalAddress = u64;
+
 typedef __SIZE_TYPE__ size_t;
 
 #define NULL 0
