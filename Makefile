@@ -14,7 +14,7 @@ LD=$(CTOOL)-ld
 OBJCOPY=$(CTOOL)-objcopy
 GDB=$(CTOOL)-gdb
 
-CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding $(INCLUDEDIRS) -mgeneral-regs-only
+CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding $(INCLUDEDIRS) -mgeneral-regs-only -fno-threadsafe-statics
 CFLAGS += -DRPI_VERSION=$(RASPI)
 
 LIBKFLAGS = -D__is_libk
